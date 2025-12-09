@@ -214,8 +214,9 @@
                         data: null,
                         responsivePriority: 1,
                         render: function(data, type, row) {
-                            return '<button onclick="selectItem(\'' + row.artikelnummer + '\')" class="btn btn-warning btn-sm me-1">Auswählen</button>' +
-                                   '<button onclick="deleteItem(\'' + row.artikelnummer + '\')" class="btn btn-danger btn-sm">Löschen</button>';
+                            const escapedArtikelnummer = row.artikelnummer.replace(/'/g, '\\\'');
+                            return '<button onclick="selectItem(\'' + escapedArtikelnummer + '\')" class="btn btn-warning btn-sm me-1">Auswählen</button>' +
+                                   '<button onclick="deleteItem(\'' + escapedArtikelnummer + '\')" class="btn btn-danger btn-sm">Löschen</button>';
                         },
                         orderable: false
                     }
