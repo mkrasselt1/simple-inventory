@@ -211,11 +211,10 @@
         </footer>
 
         <script>
-            let inventory = [];
-            let selectedItem = null;
-            let table;
-
-            $(document).ready(function() {
+        let inventory = [];
+        let selectedItem = null;
+        let table;
+        let scanningPaused = false;            $(document).ready(function() {
                 table = $('#inventoryTable').DataTable({
                     responsive: true,
                     serverSide: true,
@@ -356,6 +355,7 @@
                     .then(response => response.json())
                     .then(data => {
                         inventory = data;
+                        scanningPaused = false;
                         $('#scannerModal').modal('show');
                         Quagga.init({
                             inputStream: {
@@ -384,21 +384,22 @@
                             }
                             Quagga.start();
                             Quagga.onDetected(function(result) {
+                                if (scanningPaused) return;
                                 const code = result.codeResult.code;
                                 const item = inventory.find(i => i.ean === code || i.artikelnummer === code);
-                                Quagga.stop(); // Stop scanning after detection
+                                scanningPaused = true;
                                 if (item) {
                                     const escapedName = item.produktbezeichnung.replace(/'/g, "\\'");
                                     if (confirm('Artikel gefunden: ' + escapedName + '. Auswählen?')) {
                                         selectItem(item.artikelnummer);
                                         closeScanner();
                                     } else {
-                                        Quagga.start(); // Restart scanning if canceled
+                                        scanningPaused = false;
                                     }
                                 } else {
                                     const escapedCode = code.replace(/'/g, "\\'");
                                     if (confirm('Kein Artikel mit Code ' + escapedCode + ' gefunden. Neu scannen?')) {
-                                        Quagga.start(); // Restart scanning
+                                        scanningPaused = false;
                                     } else {
                                         closeScanner();
                                     }
