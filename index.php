@@ -27,8 +27,11 @@
 <body>
     <div class="container-fluid mt-4">
         <h1>Inventur</h1>
-        <div class="mb-3">
-            <input type="file" class="form-control" id="csvFile" accept=".csv">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div></div>
+            <button onclick="startScanner()" class="btn btn-outline-primary" title="Barcode Suche">
+                <i class="bi bi-search"></i> <i class="bi bi-upc-scan"></i> Barcode
+            </button>
         </div>
     <div class="table-responsive">
     <table id="inventoryTable" class="table table-striped" style="width:100%">
