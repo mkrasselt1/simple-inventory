@@ -199,11 +199,11 @@
                 serverSide: true,
                 ajax: 'api.php',
                 columns: [
-                    { data: 'artikelnummer' },
+                    { data: 'artikelnummer', width: '150px' },
                     { data: 'produktbezeichnung' },
                     { data: 'ean' },
-                    { data: 'menge' },
-                    { data: 'preis', render: function(data) { return data ? '€' + parseFloat(data).toFixed(2) : '-'; } },
+                    { data: 'menge', width: '80px' },
+                    { data: 'preis', width: '80px', render: function(data) { return data ? '€' + parseFloat(data).toFixed(2) : '-'; } },
                     {
                         data: null,
                         render: function(data, type, row) {
