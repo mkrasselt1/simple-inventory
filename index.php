@@ -188,9 +188,22 @@
             </div>
         </div>
 
-        <div id="scanner" style="display: none;">
-            <button id="closeScanner" onclick="closeScanner()">Schließen</button>
-            <div id="interactive" class="viewport"></div>
+        <!-- Scanner Modal -->
+        <div class="modal fade" id="scannerModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Barcode Scanner</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="closeScanner()"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <div id="interactive" class="viewport"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="closeScanner()">Schließen</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <footer class="mt-5 text-center text-muted">
@@ -343,7 +356,7 @@
                     .then(response => response.json())
                     .then(data => {
                         inventory = data;
-                        document.getElementById('scanner').style.display = 'block';
+                        $('#scannerModal').modal('show');
                         Quagga.init({
                             inputStream: {
                                 name: "Live",
@@ -373,12 +386,22 @@
                             Quagga.onDetected(function(result) {
                                 const code = result.codeResult.code;
                                 const item = inventory.find(i => i.ean === code || i.artikelnummer === code);
+                                Quagga.stop(); // Stop scanning after detection
                                 if (item) {
-                                    selectItem(item.artikelnummer);
-                                    closeScanner();
+                                    const escapedName = item.produktbezeichnung.replace(/'/g, "\\'");
+                                    if (confirm('Artikel gefunden: ' + escapedName + '. Auswählen?')) {
+                                        selectItem(item.artikelnummer);
+                                        closeScanner();
+                                    } else {
+                                        Quagga.start(); // Restart scanning if canceled
+                                    }
                                 } else {
                                     const escapedCode = code.replace(/'/g, "\\'");
-                                    alert('Artikel mit Code ' + escapedCode + ' nicht gefunden.');
+                                    if (confirm('Kein Artikel mit Code ' + escapedCode + ' gefunden. Neu scannen?')) {
+                                        Quagga.start(); // Restart scanning
+                                    } else {
+                                        closeScanner();
+                                    }
                                 }
                             });
                         });
@@ -387,7 +410,7 @@
 
             function closeScanner() {
                 Quagga.stop();
-                document.getElementById('scanner').style.display = 'none';
+                $('#scannerModal').modal('hide');
             }
 
             function confirmReset() {
