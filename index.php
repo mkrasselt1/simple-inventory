@@ -193,19 +193,11 @@
         let selectedItem = null;
         let table;
 
-        function loadInventory() {
-            fetch('api.php')
-                .then(response => response.json())
-                .then(data => {
-                    inventory = data;
-                    table.clear().rows.add(inventory).draw();
-                });
-        }
-
         $(document).ready(function() {
             table = $('#inventoryTable').DataTable({
                 responsive: true,
-                data: [],
+                serverSide: true,
+                ajax: 'api.php',
                 columns: [
                     { data: 'artikelnummer' },
                     { data: 'produktbezeichnung' },
@@ -240,9 +232,8 @@
                     }
                 ]
             });
-            loadInventory();
             // Auto-refresh every 30 seconds
-            setInterval(loadInventory, 30000);
+            setInterval(function() { table.ajax.reload(); }, 30000);
         });
 
         function selectItem(artikelnummer) {
@@ -283,7 +274,7 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ artikelnummer: selectedItem.artikelnummer, menge: value, add: add })
             }).then(() => {
-                loadInventory(); // Reload all data for consistency
+                table.ajax.reload(); // Reload all data for consistency
             });
         }
 
@@ -342,7 +333,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ action: 'reset' })
                 }).then(() => {
-                    loadInventory();
+                    table.ajax.reload();
                     $('#resetModal').modal('hide');
                     alert('Datenbank zurückgesetzt.');
                 });
@@ -424,7 +415,7 @@
                 body: JSON.stringify(items)
             }).then(response => response.json())
             .then(() => {
-                loadInventory();
+                table.ajax.reload();
                 $('#mappingModal').modal('hide');
                 alert(`${items.length} Artikel importiert.`);
             }).catch(err => alert('Fehler beim Import: ' + err));

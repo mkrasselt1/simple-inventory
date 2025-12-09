@@ -23,7 +23,57 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 switch ($method) {
     case 'GET':
-        echo json_encode(getInventory());
+        if (isset($_GET['draw'])) {
+            // DataTables server-side processing
+            $draw = intval($_GET['draw']);
+            $start = intval($_GET['start']);
+            $length = intval($_GET['length']);
+            $search = $_GET['search']['value'] ?? '';
+            $orderColumn = intval($_GET['order'][0]['column']);
+            $orderDir = $_GET['order'][0]['dir'];
+
+            $inventory = getInventory();
+            $columns = ['artikelnummer', 'produktbezeichnung', 'ean', 'menge', 'preis'];
+
+            // Filter by search
+            if (!empty($search)) {
+                $inventory = array_filter($inventory, function($item) use ($search, $columns) {
+                    foreach ($columns as $col) {
+                        if (stripos($item[$col] ?? '', $search) !== false) {
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+            }
+
+            // Sort
+            if (isset($columns[$orderColumn])) {
+                $sortKey = $columns[$orderColumn];
+                usort($inventory, function($a, $b) use ($sortKey, $orderDir) {
+                    $valA = $a[$sortKey] ?? '';
+                    $valB = $b[$sortKey] ?? '';
+                    if ($orderDir === 'asc') {
+                        return strcmp($valA, $valB);
+                    } else {
+                        return strcmp($valB, $valA);
+                    }
+                });
+            }
+
+            // Paginate
+            $totalRecords = count($inventory);
+            $inventory = array_slice($inventory, $start, $length);
+
+            echo json_encode([
+                'draw' => $draw,
+                'recordsTotal' => $totalRecords,
+                'recordsFiltered' => $totalRecords,
+                'data' => array_values($inventory)
+            ]);
+        } else {
+            echo json_encode(getInventory());
+        }
         break;
     case 'POST':
         $input = json_decode(file_get_contents('php://input'), true);
