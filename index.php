@@ -296,6 +296,9 @@
                             document.getElementById('currentAmount').textContent = item.menge;
                             document.getElementById('currentPrice').textContent = item.preis ? '€' + parseFloat(item.preis).toFixed(2) : '-';
                             document.getElementById('changeInput').value = 0;
+                            // Re-enable buttons when modal opens
+                            const buttons = document.querySelectorAll('#detailModal .btn');
+                            buttons.forEach(btn => btn.disabled = false);
                             $('#detailModal').modal('show');
                         }
                     });
@@ -317,6 +320,10 @@
             }
 
             function updateAmount(add, value) {
+                // Disable buttons to prevent multiple submissions
+                const buttons = document.querySelectorAll('#detailModal .btn');
+                buttons.forEach(btn => btn.disabled = true);
+                
                 fetch('api.php', {
                     method: 'PUT',
                     headers: {
@@ -329,6 +336,10 @@
                     })
                 }).then(() => {
                     table.ajax.reload(); // Reload all data for consistency
+                    $('#detailModal').modal('hide'); // Close the modal
+                }).catch(() => {
+                    // Re-enable buttons on error
+                    buttons.forEach(btn => btn.disabled = false);
                 });
             }
 
