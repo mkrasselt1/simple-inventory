@@ -374,7 +374,7 @@
                             },
                             numOfWorkers: 2,
                             decoder: {
-                                readers: ["ean_reader"]
+                                readers: ["ean_reader", "code_128_reader", "code_39_reader", "qr_code_reader", "upc_reader"]
                             },
                             locate: true
                         }, function(err) {
