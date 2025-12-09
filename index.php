@@ -36,8 +36,8 @@
         <thead>
             <tr>
                 <th>Artikelnummer</th>
-                <th>EAN</th>
                 <th>Produktbezeichnung</th>
+                <th>EAN</th>
                 <th>Menge</th>
                 <th>Preis</th>
                 <th>Aktion</th>
@@ -208,8 +208,8 @@
                 data: [],
                 columns: [
                     { data: 'artikelnummer' },
-                    { data: 'ean' },
                     { data: 'produktbezeichnung' },
+                    { data: 'ean' },
                     { data: 'menge' },
                     { data: 'preis', render: function(data) { return data ? '€' + parseFloat(data).toFixed(2) : '-'; } },
                     {
