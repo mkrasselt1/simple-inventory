@@ -221,6 +221,9 @@
                     }
                 ],
                 dom: 'Bfrtip',
+                paging: true,
+                pageLength: 25,
+                lengthMenu: [10, 25, 50, 100],
                 buttons: [
                     'colvis',
                     {
@@ -235,9 +238,7 @@
                         extend: 'pdf',
                         exportOptions: { columns: ':not(:last-child)' }
                     }
-                ],
-                paging: false,
-                info: false
+                ]
             });
             loadInventory();
             // Auto-refresh every 30 seconds
