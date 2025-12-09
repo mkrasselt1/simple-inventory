@@ -29,7 +29,6 @@
         <h1>Inventur</h1>
         <div class="mb-3">
             <input type="file" class="form-control" id="csvFile" accept=".csv">
-            <button onclick="openImportModal()" class="btn btn-primary mt-2">CSV Import</button>
         </div>
     <div class="table-responsive">
     <table id="inventoryTable" class="table table-striped" style="width:100%">
@@ -44,6 +43,9 @@
             </tr>
         </thead>
     </table>
+    </div>
+    <div class="mt-3 text-center">
+        <button onclick="openImportModal()" class="btn btn-secondary">CSV Import</button>
     </div>
     <div class="modal fade" id="detailModal" tabindex="-1">
         <div class="modal-dialog">
@@ -200,14 +202,16 @@
                 ajax: 'api.php',
                 columns: [
                     { data: 'artikelnummer', width: '150px' },
-                    { data: 'produktbezeichnung' },
+                    { data: 'produktbezeichnung', responsivePriority: 10 },
                     { data: 'ean' },
                     { data: 'menge', width: '80px' },
                     { data: 'preis', width: '80px', render: function(data) { return data ? '€' + parseFloat(data).toFixed(2) : '-'; } },
                     {
                         data: null,
+                        responsivePriority: 1,
                         render: function(data, type, row) {
-                            return '<button onclick="selectItem(\'' + row.artikelnummer + '\')" class="btn btn-warning btn-sm">Auswählen</button>';
+                            return '<button onclick="selectItem(\'' + row.artikelnummer + '\')" class="btn btn-warning btn-sm me-1">Auswählen</button>' +
+                                   '<button onclick="deleteItem(\'' + row.artikelnummer + '\')" class="btn btn-danger btn-sm">Löschen</button>';
                         },
                         orderable: false
                     }
@@ -276,6 +280,19 @@
             }).then(() => {
                 table.ajax.reload(); // Reload all data for consistency
             });
+        }
+
+        function deleteItem(artikelnummer) {
+            if (confirm('Artikel ' + artikelnummer + ' wirklich löschen?')) {
+                fetch('api.php', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ artikelnummer: artikelnummer })
+                }).then(() => {
+                    table.ajax.reload();
+                    alert('Artikel gelöscht.');
+                });
+            }
         }
 
         function startScanner() {

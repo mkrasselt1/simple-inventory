@@ -121,6 +121,15 @@ switch ($method) {
         saveInventory($inventory);
         echo json_encode(['status' => 'success']);
         break;
+    case 'DELETE':
+        $input = json_decode(file_get_contents('php://input'), true);
+        $inventory = getInventory();
+        $inventory = array_filter($inventory, function($item) use ($input) {
+            return $item['artikelnummer'] !== $input['artikelnummer'];
+        });
+        saveInventory($inventory);
+        echo json_encode(['status' => 'deleted']);
+        break;
     default:
         http_response_code(405);
         echo json_encode(['error' => 'Method not allowed']);
