@@ -7,6 +7,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.bootstrap5.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.bootstrap5.min.css">
@@ -184,8 +185,8 @@
         </div>
     </div>
 
-    <div id="scanner">
-        <button id="closeScanner">Schließen</button>
+    <div id="scanner" style="display: none;">
+        <button id="closeScanner" onclick="closeScanner()">Schließen</button>
         <div id="interactive" class="viewport"></div>
     </div>
 
@@ -299,8 +300,12 @@
         }
 
         function startScanner() {
-            document.getElementById('scanner').style.display = 'block';
-            Quagga.init({
+            fetch('api.php')
+                .then(response => response.json())
+                .then(data => {
+                    inventory = data;
+                    document.getElementById('scanner').style.display = 'block';
+                    Quagga.init({
                 inputStream: {
                     name: "Live",
                     type: "LiveStream",
@@ -329,12 +334,12 @@
             });
             Quagga.onDetected(function(result) {
                 const code = result.codeResult.code;
-                const item = inventory.find(i => i.ean === code);
+                const item = inventory.find(i => i.ean === code || i.artikelnummer === code);
                 if (item) {
                     selectItem(item.artikelnummer);
                     closeScanner();
                 } else {
-                    alert('Artikel mit EAN ' + code + ' nicht gefunden.');
+                    alert('Artikel mit Code ' + code + ' nicht gefunden.');
                 }
             });
         }
@@ -343,8 +348,6 @@
             Quagga.stop();
             document.getElementById('scanner').style.display = 'none';
         }
-
-        document.getElementById('closeScanner').addEventListener('click', closeScanner);
 
         function confirmReset() {
             if (document.getElementById('resetCaptcha').value === 'RESET') {
