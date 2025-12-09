@@ -383,9 +383,9 @@
                                 patchSize: "medium",
                                 halfSample: true
                             },
-                            numOfWorkers: 2,
+                            numOfWorkers: 1,
                             decoder: {
-                                readers: ["ean_reader", "code_128_reader", "code_39_reader", "qr_code_reader", "upc_reader"]
+                                readers: ["ean_reader", "qr_code_reader"]
                             },
                             locate: true
                         }, function(err) {
