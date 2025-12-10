@@ -190,7 +190,7 @@
 
         <!-- Scanner Modal -->
         <div class="modal fade" id="scannerModal" tabindex="-1">
-            <div class="modal-dialog modal-lg">
+            <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Barcode Scanner</h5>
@@ -198,6 +198,7 @@
                     </div>
                     <div class="modal-body text-center">
                         <div id="interactive" class="viewport"></div>
+                        <div id="debugOutput" class="mt-2 text-start small text-muted" style="max-height: 100px; overflow-y: auto;"></div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="closeScanner()">Schließen</button>
@@ -214,7 +215,11 @@
             let inventory = [];
             let selectedItem = null;
             let table;
-            let scanningPaused = false;
+            function addDebugMessage(message) {
+                const debugDiv = document.getElementById('debugOutput');
+                debugDiv.textContent += message + '\n';
+                debugDiv.scrollTop = debugDiv.scrollHeight; // Auto-scroll to bottom
+            }
             $(document).ready(function() {
                 table = $('#inventoryTable').DataTable({
                     responsive: true,
@@ -368,6 +373,7 @@
                     .then(data => {
                         inventory = data;
                         scanningPaused = false;
+                        document.getElementById('debugOutput').textContent = ''; // Clear debug output
                         $('#scannerModal').modal('show');
                         Quagga.init({
                             inputStream: {
@@ -375,8 +381,8 @@
                                 type: "LiveStream",
                                 target: document.querySelector('#interactive'),
                                 constraints: {
-                                    width: 320,
-                                    height: 240,
+                                    width: 640,
+                                    height: 480,
                                     facingMode: "environment"
                                 }
                             },
@@ -395,14 +401,15 @@
                             }
                         }, function(err) {
                             if (err) {
-                                console.log(err);
+                                addDebugMessage('Init Error: ' + err);
                                 return;
                             }
+                            addDebugMessage('Scanner gestartet');
                             Quagga.start();
                             Quagga.onDetected(function(result) {
-                                console.log('Detected:', result.codeResult.code);
+                                addDebugMessage('Detected: ' + result.codeResult.code);
                                 if (scanningPaused) {
-                                    console.log('Scanning paused');
+                                    addDebugMessage('Scanning paused');
                                     return;
                                 }
                                 const code = result.codeResult.code;
