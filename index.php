@@ -298,6 +298,11 @@
                 fetch('api.php')
                     .then(response => response.json())
                     .then(data => {
+                        if (!Array.isArray(data)) {
+                            console.error('API returned non-array:', data);
+                            alert('Fehler: API hat kein Array zurückgegeben. Daten: ' + JSON.stringify(data));
+                            return;
+                        }
                         const item = data.find(i => i.artikelnummer === artikelnummer);
                         if (item) {
                             selectedItem = item;
@@ -310,6 +315,10 @@
                             buttons.forEach(btn => btn.disabled = false);
                             $('#detailModal').modal('show');
                         }
+                    })
+                    .catch(err => {
+                        console.error('Fetch error:', err);
+                        alert('Fehler beim Laden der Daten: ' + err.message);
                     });
             }
 
