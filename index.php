@@ -211,10 +211,11 @@
         </footer>
 
         <script>
-        let inventory = [];
-        let selectedItem = null;
-        let table;
-        let scanningPaused = false;            $(document).ready(function() {
+            let inventory = [];
+            let selectedItem = null;
+            let table;
+            let scanningPaused = false;
+            $(document).ready(function() {
                 table = $('#inventoryTable').DataTable({
                     responsive: true,
                     serverSide: true,
@@ -323,7 +324,7 @@
                 // Disable buttons to prevent multiple submissions
                 const buttons = document.querySelectorAll('#detailModal .btn');
                 buttons.forEach(btn => btn.disabled = true);
-                
+
                 fetch('api.php', {
                     method: 'PUT',
                     headers: {
@@ -374,18 +375,18 @@
                                 type: "LiveStream",
                                 target: document.querySelector('#interactive'),
                                 constraints: {
-                                    width: 640,
-                                    height: 480,
+                                    width: 320,
+                                    height: 240,
                                     facingMode: "environment"
                                 }
                             },
                             locator: {
-                                patchSize: "medium",
+                                patchSize: "small",
                                 halfSample: true
                             },
-                            numOfWorkers: 1,
+                            numOfWorkers: 2,
                             decoder: {
-                                readers: ["ean_reader", "qr_code_reader"]
+                                readers: ["ean_reader", "code_128_reader", "qr_code_reader"]
                             },
                             locate: true
                         }, function(err) {
@@ -395,7 +396,11 @@
                             }
                             Quagga.start();
                             Quagga.onDetected(function(result) {
-                                if (scanningPaused) return;
+                                console.log('Detected:', result.codeResult.code);
+                                if (scanningPaused) {
+                                    console.log('Scanning paused');
+                                    return;
+                                }
                                 const code = result.codeResult.code;
                                 const item = inventory.find(i => i.ean === code || i.artikelnummer === code);
                                 scanningPaused = true;
