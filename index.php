@@ -199,7 +199,7 @@
                     <div class="modal-body text-center" style="padding: 10px;">
                         <div style="position: relative; display: inline-block;">
                             <div id="interactive" class="viewport" style="width: 100%; max-width: 640px; height: 480px; overflow: hidden;"></div>
-                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 150px; border: 2px solid red; border-radius: 10px; pointer-events: none;"></div>
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 150px; border: 4px solid lime; border-radius: 10px; pointer-events: none; z-index: 10;"></div>
                         </div>
                         <div id="debugOutput" class="mt-2 text-start small" style="max-height: 100px; overflow-y: auto; border: 1px solid #ccc; background: #f8f9fa; padding: 5px; font-family: monospace;"></div>
                     </div>
