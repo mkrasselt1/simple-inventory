@@ -388,7 +388,11 @@
                             decoder: {
                                 readers: ["ean_reader", "code_128_reader", "qr_code_reader"]
                             },
-                            locate: true
+                            locate: true,
+                            drawing: {
+                                showPattern: true,
+                                showLocator: true
+                            }
                         }, function(err) {
                             if (err) {
                                 console.log(err);
