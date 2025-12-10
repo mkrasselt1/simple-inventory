@@ -390,12 +390,12 @@
                                 }
                             },
                             locator: {
-                                patchSize: "small",
+                                patchSize: "medium",
                                 halfSample: true
                             },
                             numOfWorkers: 2,
                             decoder: {
-                                readers: ["ean_reader", "code_128_reader", "qr_code_reader"]
+                                readers: ["ean_reader"]
                             },
                             locate: true
                         }, function(err) {
