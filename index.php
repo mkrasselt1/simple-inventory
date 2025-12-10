@@ -190,15 +190,18 @@
 
         <!-- Scanner Modal -->
         <div class="modal fade" id="scannerModal" tabindex="-1">
-            <div class="modal-dialog modal-xl">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Barcode Scanner</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="closeScanner()"></button>
                     </div>
-                    <div class="modal-body text-center">
-                        <div id="interactive" class="viewport"></div>
-                        <div id="debugOutput" class="mt-2 text-start small text-muted" style="max-height: 100px; overflow-y: auto;"></div>
+                    <div class="modal-body text-center" style="padding: 10px;">
+                        <div style="position: relative; display: inline-block;">
+                            <div id="interactive" class="viewport" style="width: 100%; max-width: 640px; height: 480px; overflow: hidden;"></div>
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 150px; border: 2px solid red; border-radius: 10px; pointer-events: none;"></div>
+                        </div>
+                        <div id="debugOutput" class="mt-2 text-start small" style="max-height: 100px; overflow-y: auto; border: 1px solid #ccc; background: #f8f9fa; padding: 5px; font-family: monospace;"></div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="closeScanner()">Schließen</button>
@@ -317,7 +320,7 @@
 
             function addAmount() {
                 const value = parseInt(document.getElementById('changeInput').value) || 0;
-                updateAmount(true, value);
+y                updateAmount(true, value);
             }
 
             function overwriteAmount() {
@@ -373,7 +376,7 @@
                     .then(data => {
                         inventory = data;
                         scanningPaused = false;
-                        document.getElementById('debugOutput').textContent = ''; // Clear debug output
+                        document.getElementById('debugOutput').textContent = 'Debug-Ausgabe:\n'; // Clear and init debug output
                         $('#scannerModal').modal('show');
                         Quagga.init({
                             inputStream: {
@@ -394,11 +397,7 @@
                             decoder: {
                                 readers: ["ean_reader", "code_128_reader", "qr_code_reader"]
                             },
-                            locate: true,
-                            drawing: {
-                                showPattern: true,
-                                showLocator: true
-                            }
+                            locate: true
                         }, function(err) {
                             if (err) {
                                 addDebugMessage('Init Error: ' + err);
