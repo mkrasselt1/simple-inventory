@@ -300,8 +300,13 @@
                     .then(data => {
                         if (!Array.isArray(data)) {
                             console.error('API returned non-array:', data);
-                            alert('Fehler: API hat kein Array zurückgegeben. Daten: ' + JSON.stringify(data));
-                            return;
+                            // Try to convert object to array
+                            if (typeof data === 'object') {
+                                data = Object.values(data);
+                            } else {
+                                alert('Fehler: API hat kein Array zurückgegeben. Daten: ' + JSON.stringify(data).substring(0, 200));
+                                return;
+                            }
                         }
                         const item = data.find(i => i.artikelnummer === artikelnummer);
                         if (item) {
@@ -372,9 +377,17 @@
                         body: JSON.stringify({
                             artikelnummer: artikelnummer
                         })
-                    }).then(() => {
+                    }).then(response => {
+                        if (!response.ok) {
+                            throw new Error('HTTP error! status: ' + response.status);
+                        }
+                        return response.json();
+                    }).then(data => {
                         table.ajax.reload();
                         alert('Artikel gelöscht.');
+                    }).catch(error => {
+                        console.error('Delete failed:', error);
+                        alert('Fehler beim Löschen: ' + error.message);
                     });
                 }
             }

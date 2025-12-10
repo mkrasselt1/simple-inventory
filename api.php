@@ -9,7 +9,8 @@ $inventoryFile = 'inventory.json';
 function getInventory() {
     global $inventoryFile;
     if (file_exists($inventoryFile)) {
-        return json_decode(file_get_contents($inventoryFile), true);
+        $data = json_decode(file_get_contents($inventoryFile), true);
+        return is_array($data) ? $data : [];
     }
     return [];
 }
@@ -29,8 +30,8 @@ switch ($method) {
             $start = intval($_GET['start']);
             $length = intval($_GET['length']);
             $search = $_GET['search']['value'] ?? '';
-            $orderColumn = intval($_GET['order'][0]['column']);
-            $orderDir = $_GET['order'][0]['dir'];
+            $orderColumn = isset($_GET['order'][0]['column']) ? intval($_GET['order'][0]['column']) : 0;
+            $orderDir = isset($_GET['order'][0]['dir']) ? $_GET['order'][0]['dir'] : 'asc';
 
             $inventory = getInventory();
             $columns = ['artikelnummer', 'produktbezeichnung', 'ean', 'menge', 'preis'];
