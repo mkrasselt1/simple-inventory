@@ -320,7 +320,7 @@
 
             function addAmount() {
                 const value = parseInt(document.getElementById('changeInput').value) || 0;
-y                updateAmount(true, value);
+                updateAmount(true, value);
             }
 
             function overwriteAmount() {
